@@ -1,8 +1,13 @@
 # 番星ai题库 · 自建版（多平台部署）
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Node](https://img.shields.io/badge/node-%3E%3D22-339933)
+
 一个轻量 AI 答题服务：OCS 助手通过题库配置调用它，服务再请求 OpenAI 兼容接口获取答案。自带状态主页，展示快速导入链接、服务状态、模型配置和接口测试；内置答题缓存与模型连通性测试。API Key 只保存在服务端，浏览器端不暴露。
 
 支持 Linux / macOS / Windows 原生运行、Docker、EdgeOne 边缘函数（国内/国际）和 Cloudflare Workers。
+
+> **免责声明**：本项目仅用于学习与技术研究。请遵守相关平台规则和法律法规，不得用于考试作弊、代刷课或其他违规用途。AI 生成答案可能不准确，使用后果由使用者自行承担，详见 [DISCLAIMER.md](DISCLAIMER.md)。
 
 ## 文件
 
@@ -269,3 +274,14 @@ npm test        # 52 项测试
 - **OCS 提示请求失败**：检查 `@connect` 是否包含函数域名；HTTPS 页面尽量用 `GM_xmlhttpRequest`，避免混合内容限制。
 - **主页配置地址不对**：设置 `PUBLIC_BASE_URL` 为实际对外地址，或通过实际域名访问主页。
 - **EdgeOne 代码不同步**：修改 `edge/core.mjs` 或 `homepage.html` 后执行 `npm run build`。
+
+## 11. 开源协议与项目文档
+
+- [MIT License](LICENSE)
+- [更新日志](CHANGELOG.md)
+- [贡献指南](CONTRIBUTING.md)
+- [安全策略](SECURITY.md)
+- [免责声明](DISCLAIMER.md)
+- [第三方思路说明](NOTICE)
+
+产品思路参考了 [ZError](https://github.com/Miaozeqiu/ZError)（MIT），但本项目为独立实现，未复制其源代码。

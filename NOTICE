@@ -1,0 +1,15 @@
+番星ai题库
+Copyright (c) 2026 fanxing724
+
+本项目为独立实现。
+
+产品思路参考了 Miaozeqiu/ZError（MIT License）：
+https://github.com/Miaozeqiu/ZError
+
+本项目未复制、修改或包含 ZError 的源代码。相关思路仅包括：
+- 多 AI 供应商/模型的配置展示
+- 本地答题缓存
+- 模型连通性测试
+- OCS 题库配置生成
+
+ZError 的版权与许可归其原作者所有。

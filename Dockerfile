@@ -1,7 +1,7 @@
 FROM node:24-alpine
 
 WORKDIR /app
-COPY server.js answer-utils.js homepage.html package.json ./
+COPY server.js answer-utils.js homepage.html package.json LICENSE NOTICE ./
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0

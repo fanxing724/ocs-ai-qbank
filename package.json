@@ -3,6 +3,27 @@
   "version": "1.3.0",
   "private": true,
   "description": "番星ai题库：基于 OCS AnswererWrapper 规范的多平台 AI 题库，含状态主页",
+  "license": "MIT",
+  "author": "fanxing724",
+  "homepage": "https://724520.xyz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://cnb.cool/rice-King/ocs-ai-qbank.git"
+  },
+  "bugs": {
+    "url": "https://cnb.cool/rice-King/ocs-ai-qbank/-/issues"
+  },
+  "keywords": [
+    "ocs",
+    "ocsjs",
+    "ai",
+    "question-bank",
+    "answerer",
+    "openai",
+    "cloudflare-workers",
+    "edgeone",
+    "docker"
+  ],
   "engines": {
     "node": ">=22"
   },

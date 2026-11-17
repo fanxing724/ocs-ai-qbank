@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>番星ai题库 · 自建版</title>
+  <style>
+    :root {
+      --bg: #080b16;
+      --panel: rgba(17, 23, 42, 0.78);
+      --panel-solid: #11172a;
+      --line: rgba(148, 163, 184, 0.16);
+      --text: #e8ecf7;
+      --muted: #94a3b8;
+      --accent: #8b5cf6;
+      --accent-2: #22d3ee;
+      --ok: #34d399;
+      --bad: #fb7185;
+      --warn: #fbbf24;
+      --radius: 18px;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: dark; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(900px 500px at 12% -10%, rgba(139, 92, 246, 0.28), transparent 60%),
+        radial-gradient(800px 480px at 92% 0%, rgba(34, 211, 238, 0.18), transparent 60%),
+        radial-gradient(700px 500px at 50% 110%, rgba(52, 211, 153, 0.10), transparent 60%);
+    }
+
+    a { color: var(--accent-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+      color: #c4b5fd;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      font-size: 18px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #4f46e5 55%, var(--accent-2));
+      box-shadow: 0 12px 30px rgba(139, 92, 246, 0.35);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(20px, 2.4vw, 27px);
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .brand h1 span {
+      font-size: 0.55em;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.72);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .status-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.12);
+    }
+
+    .status-pill.online { color: var(--ok); border-color: rgba(52, 211, 153, 0.35); }
+    .status-pill.online .dot {
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.14);
+    }
+
+    .status-pill.offline { color: var(--bad); border-color: rgba(251, 113, 133, 0.35); }
+    .status-pill.offline .dot {
+      background: var(--bad);
+      box-shadow: 0 0 0 4px rgba(251, 113, 133, 0.14);
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 30px;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(34, 211, 238, 0.05) 55%, transparent),
+        var(--panel);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      color: var(--accent-2);
+    }
+
+    .hero h2 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 3.2vw, 38px);
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+    }
+
+    .muted { color: var(--muted); }
+    .hero p { margin: 0; max-width: 650px; }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(30, 41, 59, 0.72);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(148, 163, 184, 0.38);
+      background: rgba(51, 65, 85, 0.78);
+    }
+
+    .btn.primary {
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      box-shadow: 0 12px 26px rgba(99, 102, 241, 0.28);
+    }
+
+    .btn.primary:hover { background: linear-gradient(135deg, #9f7aea, #6366f1); }
+
+    .btn.small {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 9px;
+    }
+
+    .card-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .link-box {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .link-box code {
+      padding: 7px 10px;
+      border-radius: 9px;
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid var(--line);
+      color: #a5f3fc;
+      word-break: break-all;
+    }
+
+    .token-row {
+      margin-top: 12px;
+      max-width: 440px;
+    }
+
+    .token-row input {
+      font-size: 13px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.58);
+      min-width: 0;
+    }
+
+    .stat .label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat .value {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat .value.ok { color: var(--ok); }
+    .stat .value.bad { color: var(--bad); }
+
+    .grid.two {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .code {
+      margin: 0;
+      max-height: 360px;
+      overflow: auto;
+      padding: 16px;
+      border-radius: 13px;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid var(--line);
+      color: #cbd5e1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .hint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
+    .kv {
+      margin: 0;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 10px 16px;
+      align-items: baseline;
+    }
+
+    .kv dt {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .kv dd {
+      margin: 0;
+      font-size: 13.5px;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    form { display: grid; gap: 12px; }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(2, 6, 23, 0.55);
+      color: var(--text);
+      font: inherit;
+      font-size: 13.5px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(139, 92, 246, 0.65);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.14);
+    }
+
+    textarea { min-height: 78px; resize: vertical; }
+
+    .result {
+      margin-top: 14px;
+      min-height: 58px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px dashed var(--line);
+      background: rgba(2, 6, 23, 0.35);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .result.ok {
+      color: #bbf7d0;
+      border-color: rgba(52, 211, 153, 0.38);
+      background: rgba(6, 78, 59, 0.22);
+    }
+
+    .endpoints {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .endpoints li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(2, 6, 23, 0.3);
+      font-size: 13px;
+    }
+
+    .endpoints code { color: #a5f3fc; }
+    .endpoints span { color: var(--muted); font-size: 12px; }
+
+    .meta {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      word-break: break-word;
+    }
+
+    footer {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translate(-50%, 18px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      background: rgba(30, 27, 75, 0.92);
+      color: #ede9fe;
+      font-size: 13px;
+      font-weight: 600;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @media (max-width: 980px) {
+      .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .grid.two { grid-template-columns: minmax(0, 1fr); }
+      .hero { flex-direction: column; align-items: flex-start; }
+      .hero-actions { justify-content: flex-start; }
+    }
+
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 20px, 1180px); padding-top: 18px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { padding: 22px; }
+      .card { padding: 18px; }
+      .btn { flex: 1 1 auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">番</div>
+        <div>
+          <h1>番星ai题库 <span>自建版</span></h1>
+          <p>OCS 助手 · AI 答题服务</p>
+        </div>
+      </div>
+      <div class="status-pill" id="statusPill" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="statusText">检测中</span>
+      </div>
+    </header>
+
+    <section class="card hero">
+      <div>
+        <p class="eyebrow">QUICK IMPORT</p>
+        <h2>一条链接，接入 OCS 自动答题</h2>
+        <p class="muted">将订阅链接填入 OCS 的题库配置，或直接复制 JSON。配置会按当前访问地址自动生成。</p>
+        <div class="link-box">
+          <code id="configUrl">加载中...</code>
+        </div>
+        <div class="token-row">
+          <input id="tokenInput" type="password" placeholder="可选：输入 LOCAL_TOKEN 生成带令牌配置" autocomplete="off">
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a class="btn primary" id="configLink" href="/config" target="_blank" rel="noreferrer">打开配置链接</a>
+        <button class="btn" id="copyLink" type="button">复制链接</button>
+        <button class="btn" id="copyConfig" type="button">复制 JSON</button>
+      </div>
+    </section>
+
+    <section class="stats" aria-label="服务状态">
+      <div class="stat"><span class="label">服务状态</span><span class="value" id="statStatus">检测中</span></div>
+      <div class="stat"><span class="label">运行平台</span><span class="value" id="statPlatform">-</span></div>
+      <div class="stat"><span class="label">运行时长</span><span class="value" id="statUptime">-</span></div>
+      <div class="stat"><span class="label">当前模型</span><span class="value" id="statModel">-</span></div>
+      <div class="stat"><span class="label">API Key</span><span class="value" id="statKey">-</span></div>
+      <div class="stat"><span class="label">令牌保护</span><span class="value" id="statToken">-</span></div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <div class="card-head">
+          <h3>题库配置</h3>
+          <span class="tag">JSON</span>
+        </div>
+        <pre class="code" id="configJson">加载中...</pre>
+        <p class="hint">提示：<code>url</code> 会自动使用当前访问地址；如需固定域名，可设置环境变量 <code>PUBLIC_BASE_URL</code>。启用 <code>LOCAL_TOKEN</code> 时，可在上方输入令牌生成带 <code>X-Token</code> 的配置，令牌只保留在当前页面。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>模型与限制</h3>
+          <div class="card-tools">
+            <button class="btn small" id="testModel" type="button">测试模型</button>
+            <span class="tag">/status</span>
+          </div>
+        </div>
+        <dl class="kv" id="modelInfo">
+          <dt>状态</dt><dd>加载中...</dd>
+        </dl>
+        <div class="meta" id="modelTestResult"></div>
+        <div class="meta" id="meta">正在读取服务信息</div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <div class="card-head">
+          <h3>接口测试</h3>
+          <span class="tag">/query</span>
+        </div>
+        <form id="testForm">
+          <label>题型
+            <select id="testType">
+              <option value="single">单选题</option>
+              <option value="multiple">多选题</option>
+              <option value="judgement">判断题</option>
+              <option value="completion">填空题</option>
+            </select>
+          </label>
+          <label>题目
+            <textarea id="testTitle" required>1+2=?</textarea>
+          </label>
+          <label>选项（每行一个）
+            <textarea id="testOptions">A. 1
+B. 2
+C. 3
+D. 4</textarea>
+          </label>
+          <button class="btn primary" type="submit">测试答题</button>
+        </form>
+        <div class="result" id="testResult" aria-live="polite">等待测试</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>服务端点</h3>
+          <span class="tag">API</span>
+        </div>
+        <ul class="endpoints">
+          <li><code>GET /</code><span>主页</span></li>
+          <li><code>GET /health</code><span>健康检查</span></li>
+          <li><code>GET /status</code><span>运行状态</span></li>
+          <li><code>GET /config</code><span>题库配置</span></li>
+          <li><code>GET|POST /query</code><span>兼容答题接口</span></li>
+          <li><code>GET|POST /search</code><span>OCS 标准答题</span></li>
+        </ul>
+        <div class="meta" id="endpointMeta"></div>
+      </div>
+    </section>
+
+    <footer>
+      <span>番星ai题库 · 自建版 · 仅展示服务状态与模型配置，不返回 API Key</span>
+      <span><a href="/config">订阅配置</a> · <a href="/status">状态 JSON</a> · <a href="/health">健康检查</a></span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      const origin = window.location.origin;
+      const $ = (id) => document.getElementById(id);
+      const setText = (id, value) => {
+        const node = $(id);
+        if (node) node.textContent = value === undefined || value === null || value === '' ? '-' : String(value);
+      };
+      const setTone = (id, ok) => {
+        const node = $(id);
+        if (!node) return;
+        node.classList.toggle('ok', Boolean(ok));
+        node.classList.toggle('bad', ok === false);
+      };
+
+      let configCache = null;
+      let endpointsCache = null;
+      let toastTimer = 0;
+
+      function showToast(message) {
+        const toast = $('toast');
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove('show'), 1800);
+      }
+
+      function formatUptime(seconds) {
+        const total = Number(seconds);
+        if (!Number.isFinite(total) || total < 0) return '-';
+        const days = Math.floor(total / 86400);
+        const hours = Math.floor((total % 86400) / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const secs = Math.floor(total % 60);
+        if (days > 0) return days + '天 ' + hours + '小时';
+        if (hours > 0) return hours + '小时 ' + minutes + '分';
+        if (minutes > 0) return minutes + '分 ' + secs + '秒';
+        return secs + '秒';
+      }
+
+      function currentConfigUrl() {
+        return (endpointsCache && endpointsCache.config) || origin + '/config';
+      }
+
+      function currentQueryUrl() {
+        return (endpointsCache && endpointsCache.query) || origin + '/query';
+      }
+
+      function currentBaseUrl() {
+        const homepage = (endpointsCache && endpointsCache.homepage) || origin + '/';
+        return homepage.replace(/\/+$/, '');
+      }
+
+      function applyEndpoints() {
+        const configUrl = currentConfigUrl();
+        setText('configUrl', configUrl);
+        const link = $('configLink');
+        if (link) link.href = configUrl;
+      }
+
+      const SOURCE_LABELS = {
+        'PUBLIC_BASE_URL': '环境变量',
+        'lan-ip': '内网 IP',
+        'loopback': '本机回环',
+        'ip': '服务器 IP',
+        'domain': '域名',
+        'edge-domain': '边缘域名'
+      };
+
+      function renderModel(status) {
+        const address = status.address || {};
+        const rows = [
+          ['访问地址', address.baseUrl],
+          ['识别方式', SOURCE_LABELS[address.source] || address.source],
+          ['供应商', status.model && status.model.provider],
+          ['模型', status.model && status.model.model],
+          ['接口地址', status.model && status.model.baseUrl],
+          ['请求超时', status.model ? status.model.timeoutMs + ' ms' : '-'],
+          ['题目上限', status.limits ? status.limits.maxTitleLength + ' 字符' : '-'],
+          ['选项上限', status.limits ? status.limits.maxOptionsLength + ' 字符' : '-'],
+          ['每分钟限流', status.limits && status.limits.rateLimitPerMin ? status.limits.rateLimitPerMin + ' 次' : '未启用'],
+          ['答题缓存', status.cache ? (status.cache.enabled ? status.cache.size + ' 条 · 命中 ' + status.cache.hits : '未启用') : '-'],
+          ['Version', status.version]
+        ];
+        const dl = $('modelInfo');
+        if (!dl) return;
+        dl.replaceChildren();
+        rows.forEach(([label, value]) => {
+          const dt = document.createElement('dt');
+          dt.textContent = label;
+          const dd = document.createElement('dd');
+          dd.textContent = value === undefined || value === null || value === '' ? '-' : String(value);
+          dl.append(dt, dd);
+        });
+      }
+
+      async function refreshStatus() {
+        try {
+          const response = await fetch(origin + '/status', { cache: 'no-store' });
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          const data = await response.json();
+
+          $('statusPill').classList.add('online');
+          $('statusPill').classList.remove('offline');
+          setText('statusText', '服务在线');
+          setText('statStatus', '在线');
+          setTone('statStatus', true);
+          setText('statPlatform', data.platform);
+          setText('statUptime', formatUptime(data.uptime));
+          setText('statModel', data.model && data.model.model);
+          setText('statKey', data.apiKeyConfigured ? '已配置' : '未配置');
+          setTone('statKey', Boolean(data.apiKeyConfigured));
+          setText('statToken', data.security && data.security.tokenEnabled ? '已启用' : '未启用');
+          setTone('statToken', data.security && data.security.tokenEnabled);
+          renderModel(data);
+          endpointsCache = data.endpoints || null;
+          applyEndpoints();
+
+          const endpoints = data.endpoints || {};
+          setText('endpointMeta', '配置文件 ' + currentConfigUrl() + ' · ' + new Date(data.time).toLocaleString());
+          setText('meta', '版本 ' + data.version + ' · ' + new Date(data.time).toLocaleString() + ' · ' + ((data.model && data.model.baseUrl) || ''));
+        } catch (error) {
+          $('statusPill').classList.remove('online');
+          $('statusPill').classList.add('offline');
+          setText('statusText', '服务离线');
+          setText('statStatus', '离线');
+          setTone('statStatus', false);
+          setText('meta', '状态获取失败：' + error.message);
+          setText('endpointMeta', '状态获取失败：' + error.message);
+        }
+      }
+
+      function currentConfig() {
+        if (!configCache) return null;
+        const cloned = JSON.parse(JSON.stringify(configCache));
+        const tokenInput = $('tokenInput');
+        const token = tokenInput ? tokenInput.value.trim() : '';
+        if (token && cloned[0]) {
+          cloned[0].headers = {
+            'Content-Type': 'application/json',
+            'X-Token': token
+          };
+        }
+        return cloned;
+      }
+
+      function renderConfig() {
+        const config = currentConfig();
+        const pre = $('configJson');
+        if (pre) pre.textContent = config ? JSON.stringify(config, null, 2) : '加载中...';
+      }
+
+      async function refreshConfig() {
+        try {
+          const response = await fetch(origin + '/config', { cache: 'no-store' });
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          configCache = await response.json();
+          renderConfig();
+          applyEndpoints();
+        } catch (error) {
+          setText('configUrl', '配置加载失败：' + error.message);
+          const pre = $('configJson');
+          if (pre) pre.textContent = '配置加载失败：' + error.message;
+        }
+      }
+
+      async function copyText(text, message) {
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (error) {
+          const area = document.createElement('textarea');
+          area.value = text;
+          area.style.position = 'fixed';
+          area.style.opacity = '0';
+          document.body.appendChild(area);
+          area.select();
+          document.execCommand('copy');
+          area.remove();
+        }
+        showToast(message);
+      }
+
+      $('copyLink').addEventListener('click', () => copyText(currentConfigUrl(), '配置链接已复制'));
+      $('copyConfig').addEventListener('click', () => {
+        const config = currentConfig();
+        copyText(config ? JSON.stringify(config, null, 2) : '', '题库配置已复制');
+      });
+      $('tokenInput').addEventListener('input', renderConfig);
+
+      $('testModel').addEventListener('click', async () => {
+        const result = $('modelTestResult');
+        result.textContent = '模型测试中...';
+        const headers = {};
+        const token = $('tokenInput').value.trim();
+        if (token) headers['X-Token'] = token;
+        try {
+          const response = await fetch(currentBaseUrl() + '/test-model', {
+            method: 'POST',
+            headers,
+            cache: 'no-store'
+          });
+          const data = await response.json();
+          if (data.code === 1) {
+            result.textContent = '模型正常 · ' + data.data.provider + ' / ' + data.data.model
+              + ' · ' + data.data.latencyMs + ' ms · 返回：' + data.data.answer;
+          } else {
+            result.textContent = '测试失败：' + (data.message || '未知错误');
+          }
+        } catch (error) {
+          result.textContent = '测试失败：' + error.message;
+        }
+      });
+
+      $('testForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const result = $('testResult');
+        result.classList.remove('ok');
+        result.textContent = '请求中...';
+        const params = new URLSearchParams({
+          title: $('testTitle').value,
+          type: $('testType').value,
+          options: $('testOptions').value
+        });
+        try {
+          const headers = {};
+          const token = $('tokenInput').value.trim();
+          if (token) headers['X-Token'] = token;
+          const response = await fetch(currentQueryUrl() + '?' + params.toString(), { cache: 'no-store', headers });
+          const data = await response.json();
+          if (data.code === 1) {
+            result.classList.add('ok');
+            result.textContent = '答案：' + data.data.answer + '\n题目：' + data.data.question + '\n来源：' + (data.data.is_ai ? 'AI' : '题库');
+          } else {
+            result.textContent = '失败：' + (data.message || '未知错误');
+          }
+        } catch (error) {
+          result.textContent = '请求失败：' + error.message;
+        }
+      });
+
+      refreshStatus();
+      refreshConfig();
+      window.setInterval(refreshStatus, 15000);
+    })();
+  </script>
+</body>
+</html>

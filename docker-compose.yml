@@ -1,0 +1,22 @@
+services:
+  ocs-ai-tiku:
+    build: .
+    image: ocs-ai-tiku:latest
+    container_name: ocs-ai-tiku
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      AI_BASE_URL: ${AI_BASE_URL:-https://api.openai.com/v1}
+      AI_MODEL: ${AI_MODEL:-gpt-4o-mini}
+      AI_PROVIDER_NAME: ${AI_PROVIDER_NAME:-OpenAI 兼容}
+      AI_API_KEY: ${AI_API_KEY:?请在 .env 中设置 AI_API_KEY}
+      LOCAL_TOKEN: ${LOCAL_TOKEN:-}
+      AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-30000}
+      MAX_TITLE_LENGTH: ${MAX_TITLE_LENGTH:-2000}
+      MAX_OPTIONS_LENGTH: ${MAX_OPTIONS_LENGTH:-8000}
+      RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-0}
+      CACHE_TTL_MS: ${CACHE_TTL_MS:-86400000}
+      CACHE_MAX_ENTRIES: ${CACHE_MAX_ENTRIES:-1000}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      LAN_IP: ${LAN_IP:-}

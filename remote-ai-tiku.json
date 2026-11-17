@@ -1,0 +1,20 @@
+[
+  {
+    "name": "番星ai题库（远程）",
+    "url": "https://your-domain.example.com/search",
+    "homepage": "https://your-domain.example.com",
+    "method": "post",
+    "contentType": "json",
+    "type": "GM_xmlhttpRequest",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Token": "REPLACE_WITH_LOCAL_TOKEN"
+    },
+    "data": {
+      "title": "${title}",
+      "type": "${type}",
+      "options": "${options}"
+    },
+    "handler": "return (res)=> res && res.code === 1 ? [res.data.title, res.data.answers[0]] : [(res && res.msg) || '题库请求失败', undefined]"
+  }
+]

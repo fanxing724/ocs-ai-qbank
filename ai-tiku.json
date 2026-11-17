@@ -1,0 +1,22 @@
+[
+  {
+    "name": "番星ai题库（直连）",
+    "url": "https://api.openai.com/v1/chat/completions",
+    "homepage": "https://platform.openai.com",
+    "method": "post",
+    "contentType": "json",
+    "type": "GM_xmlhttpRequest",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer REPLACE_WITH_YOUR_API_KEY"
+    },
+    "data": {
+      "model": "gpt-4o-mini",
+      "temperature": 0,
+      "messages": {
+        "handler": "return (env) => {\n  const typeMap = { single: '单选题', multiple: '多选题', judgement: '判断题', completion: '填空题' };\n  const t = typeMap[env.type] || '未知题型';\n  return [\n    { role: 'system', content: '你是严谨的答题助手。只输出最终答案，不要解释或推理。单选题只输出选项字母（如 A）；多选题输出字母并用 # 连接（如 A#B）；判断题输出 正确 或 错误；填空题直接输出填空内容。' },\n    { role: 'user', content: '题型：' + t + '\\n题目：' + (env.title || '') + '\\n选项：' + (env.options || '无') }\n  ];\n}"
+      }
+    },
+    "handler": "return (res) => {\n  const choice = res && res.choices && res.choices[0];\n  const content = choice && choice.message && choice.message.content;\n  if (!content) return undefined;\n  let answer = String(content).trim();\n  answer = answer.replace(/^```[\\w-]*\\s*/, '').replace(/```$/, '').trim();\n  answer = answer.replace(/^(?:答案|answer)\\s*[:：]\\s*/i, '').trim();\n  const letters = answer.toUpperCase();\n  if (/^[A-Z](?:[#,，、\\s]+[A-Z])+$/.test(letters)) {\n    answer = letters.replace(/[#,，、\\s]+/g, '#').replace(/#+/g, '#').replace(/^#|#$/g, '');\n  }\n  return [undefined, answer];\n}"
+  }
+]

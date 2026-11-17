@@ -1,0 +1,19 @@
+[
+  {
+    "name": "番星ai题库（本地）",
+    "url": "http://127.0.0.1:3000/search",
+    "homepage": "http://127.0.0.1:3000",
+    "method": "post",
+    "contentType": "json",
+    "type": "GM_xmlhttpRequest",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "data": {
+      "title": "${title}",
+      "type": "${type}",
+      "options": "${options}"
+    },
+    "handler": "return (res)=> res && res.code === 1 ? [res.data.title, res.data.answers[0]] : [(res && res.msg) || '题库请求失败', undefined]"
+  }
+]

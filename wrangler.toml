@@ -1,0 +1,14 @@
+name = "ocs-ai-tiku"
+main = "edge/cloudflare.mjs"
+compatibility_date = "2026-11-17"
+
+[vars]
+AI_BASE_URL = "https://api.openai.com/v1"
+AI_MODEL = "gpt-4o-mini"
+AI_PROVIDER_NAME = "OpenAI 兼容"
+AI_TIMEOUT_MS = "30000"
+MAX_TITLE_LENGTH = "2000"
+MAX_OPTIONS_LENGTH = "8000"
+CACHE_TTL_MS = "86400000"
+CACHE_MAX_ENTRIES = "1000"
+PUBLIC_BASE_URL = ""

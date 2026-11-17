@@ -1,0 +1,20 @@
+{
+  "name": "ocs-ai-tiku",
+  "version": "1.3.0",
+  "private": true,
+  "description": "番星ai题库：基于 OCS AnswererWrapper 规范的多平台 AI 题库，含状态主页",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js",
+    "check": "node --check server.js && node --check answer-utils.js && node --check test.js && node --check scripts/build-homepage.js && node --check scripts/build-edgeone.js && node --check edge/homepage.mjs && node --check edge/edgeone.js && node --check edge/core.mjs && node --check edge/cloudflare.mjs",
+    "build": "npm run build:homepage && npm run build:edgeone",
+    "build:homepage": "node scripts/build-homepage.js",
+    "build:edgeone": "node scripts/build-edgeone.js",
+    "docker:build": "docker build -t ocs-ai-tiku .",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  }
+}

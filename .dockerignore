@@ -1,0 +1,8 @@
+node_modules
+.env
+.git
+.gitignore
+*.md
+test.js
+Dockerfile
+docker-compose.yml

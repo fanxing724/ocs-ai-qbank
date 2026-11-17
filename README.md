@@ -133,6 +133,30 @@ npm run docker:up
 docker buildx build --platform linux/amd64,linux/arm64 -t 你的仓库/ocs-ai-tiku:latest --push .
 ```
 
+### 已发布镜像（CNB 制品库）
+
+- 镜像：`docker.cnb.cool/rice-king/ocs-ai-qbank`
+- 标签：`1.3.0`、`latest`、`main`
+- 架构：`linux/amd64`
+- 许可证：MIT
+
+```bash
+docker pull docker.cnb.cool/rice-king/ocs-ai-qbank:1.3.0
+
+docker run -d --name fanxing-ai-tiku \
+  -p 3000:3000 \
+  -e AI_API_KEY=sk-你的密钥 \
+  -e AI_BASE_URL=https://api.openai.com/v1 \
+  -e AI_MODEL=gpt-4o-mini \
+  docker.cnb.cool/rice-king/ocs-ai-qbank:1.3.0
+```
+
+私有镜像拉取前需登录：
+
+```bash
+docker login docker.cnb.cool -u cnb -p "$CNB_TOKEN"
+```
+
 ## 3. EdgeOne 边缘函数（国内 / 国际）
 
 `edge/homepage.mjs` 和 `edge/edgeone.js` 均由构建脚本生成。修改 `homepage.html` 或 `edge/core.mjs` 后执行：
